@@ -1,0 +1,31 @@
+{
+  "name": "lava-bazaar-server",
+  "version": "1.0.0",
+  "description": "A cross-chain asset aggregator using p2p RPC",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KagemniKarimu/lava-bazaar.git"
+  },
+  "keywords": [
+    "lava",
+    "web3"
+  ],
+  "author": "KagemniKarimu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KagemniKarimu/lava-bazaar/issues"
+  },
+  "homepage": "https://github.com/KagemniKarimu/lava-bazaar#readme",
+  "dependencies": {
+    "@lavanet/lava-viem": "^0.30.6",
+    "express": "^4.18.2",
+    "viem": "^1.19.13"
+  }
+}
