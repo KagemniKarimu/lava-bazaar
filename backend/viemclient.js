@@ -70,6 +70,16 @@ async function getWalletBalance(addressInput, chainInput) {
     return balance;
 };
 
+// Function that gets the number of TXs from a given address!
+async function getWalletTxNumber(addressInput, chainInput) {
+    const client = await getClient(chainInput);
+
+    //Call the viem getTxCount
+    const txCount = await client.getTransactionCount({ address: addressInput });
+
+    return txCount;
+
+};
 
 // To Be Implemented (In the Future!)
 // Function that gets wallet TXs of a given address on a given chain within certain block range
@@ -97,13 +107,3 @@ async function getWalletBalance(addressInput, chainInput) {
 
 
 
-// Function that gets the number of TXs from a given address!
-async function getWalletTxNumber(addressInput, chainInput) {
-    const client = await getClient(chainInput);
-
-    //Call the viem getTxCount
-    const txCount = await client.getTransactionCount({ address: addressInput });
-
-    return txCount;
-
-};
