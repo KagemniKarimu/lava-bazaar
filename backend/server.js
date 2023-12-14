@@ -1,71 +1,58 @@
-const { createViemClientWithLavaSDK } = require("@lavanet/lava-viem")
+
 const express = require('express');
-const { parseAbiItem } = require('viem')
+const { createClientForChain,
+  clientList,
+  getBlockNumber,
+  getWalletBalance,
+  // getWalletTransactions, 
+  getWalletTxNumber } = require('./viemclient.js');
 
 const app = express();
-let viemETH; let viemOPTM; let viemARB;
 
+
+// ***** INITIALIZATION *****
+
+//Change the List of Supported Chains by adding Lava's SpecIndex/ChainID to this Array
+const supportedChains = ["ARB1", "AVAX", "CELO", "ETH1", "FVM", "OPTM", "POLYGON1"];
+
+// Asynchronously Connect all P2P RPC
 (async () => {
-  // Initialize Each Chain
-  //ETH1 on LavaSDK Integration
-  viemETH = await createViemClientWithLavaSDK({
-    badge: {
-      badgeServerAddress: "https://badges.lavanet.xyz",
-      projectId: " // ", // Fetch your project ID from https://gateway.lavanet.xyz
-    },
-    geolocation: "2",
-    chainIds: "ETH1"
-  });
 
-  console.log("🔩 ETH intialized: ", viemETH.name, viemETH.transport.name, viemETH.uid);
+  // Initialize Each Chain - this can also be done in Parallel with Promises for greater ⚡
 
-  //OPTM on LavaSDK Integration
-  viemOPTM = await createViemClientWithLavaSDK({
-    badge: {
-      badgeServerAddress: "https://badges.lavanet.xyz",
-      projectId: " // ", // Fetch your project ID from https://gateway.lavanet.xyz
-    },
-    chainIds: "OPTM",
-    geolocation: "2"
-  });
+  for (const chain of supportedChains) {
+    const client = await createClientForChain(chain);
+    clientList[chain] = client;
+  }
 
-  console.log("🔩 OPTM initialized: ", viemOPTM.name, viemOPTM.transport.name, viemOPTM.uid);
-
-  //ARB1 on LavaSDK Integration
-  viemARB = await createViemClientWithLavaSDK({
-    badge: {
-      badgeServerAddress: "https://badges.lavanet.xyz",
-      projectId: " // ", // Fetch your project ID from https://gateway.lavanet.xyz
-    },
-    chainIds: "ARB1",
-    geolocation: "2"
-  });
-
-  console.log("🔩 ARB1 initialized: ", viemARB.name, viemARB.transport.name, viemARB.uid);
-
-  //Verify all Public Clients were successfully created
-  if (viemETH && viemOPTM && viemARB) {
+  //Verify correct # of Public Clients were successfully created
+  if (supportedChains.length == Object.keys(clientList).length) {
     console.log("🌋 LavaSDK successfully initialized!")
   } else {
     console.log("LavaSDK failed to initialize! One or more chains could not be reached")
   };
+
 })();
 
+
+// ***** ROUTES / ROUTING *****
+
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  res.send('P2P RPC Server');
 });
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-app.get('/api/chain/latestblocknum', async (req, res) => {
-  console.log("✅ GET - /api/chain/latestblocknum", req.query.chain);
+// Route to get LatestBlockNumber
+app.get('/api/chain/latest_block_num', async (req, res) => {
+  console.log("✅ GET - /api/chain/latest_block_num", req.query.chain);
   try {
     const chain = req.query.chain
     const latestBlockNum = await getBlockNumber(chain);
 
     console.log(`➡️  ${chain} Returned BlockNum: ${latestBlockNum}`)
-    res.json({chain: chain, latestBlockNumber: latestBlockNum})
+    res.json({ chain: chain, latestBlockNumber: latestBlockNum })
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -88,32 +75,27 @@ app.get('/api/wallet/balance', async (req, res) => {
   // Logic to interact with blockchain and fetch balance
 });
 
-// Route to get transaction history
-app.get('/api/wallet/transactions', async (req, res) => {
-  console.log("✅ GET - /api/wallet/transactions", req.query.address, req.query.chain, `[${req.query.fromBlock} : ${req.query.toBlock}]`);
-  // Logic to interact with blockchain and fetch transactions
-  try {
-    const walletAddress = req.query.address;
-    const chain = req.query.chain;
-    const fromBlock = req.query.fromBlock; // Assuming these are query parameters
-    const toBlock = req.query.toBlock;
-
-    // Check if all required parameters are provided
-    if (!walletAddress || !chain || !fromBlock || !toBlock) {
-      return res.status(400).json({ error: 'Missing required parameters' });
-    };
-
-    //Get and return the Transactions
-
-    const transactions = await getWalletTransactions(walletAddress, chain, fromBlock, toBlock);
-    console.log(`➡️  ${chain} Recovered ${transactions.length} TXs from ${walletAddress}`);
-
-    res.json({chain: chain, address: walletAddress, transactions });
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Route to get transaction history (DISABLED!)
+//app.get('/api/wallet/transactions', async (req, res) => {
+//  console.log("✅ GET - /api/wallet/transactions", req.query.address, req.query.chain);
+//  // Logic to interact with blockchain and fetch transactions
+//
+//  try {
+//    const { address: walletAddress, chain } = req.query;
+//
+//    if (!walletAddress || !chain) {
+//      return res.status(400).json({ error: 'Missing required parameters' });
+//    };
+//
+//    const transactions = await getWalletTransactions(walletAddress, chain);
+//    console.log(`➡️  ${chain} Recovered ${transactions.length} TXs from ${walletAddress}`);
+//
+//    res.json(JSON.stringify({ chain, address: walletAddress, transactions }, simplifyJSONIntegers));
+//  } catch (error) {
+//    console.error(error);
+//    res.status(500).json({ error: error.message });
+//  }
+//});
 
 //Route to get Transaction Count
 app.get('/api/wallet/transaction_count', async (req, res) => {
@@ -133,7 +115,7 @@ app.get('/api/wallet/transaction_count', async (req, res) => {
     const transactionCount = await getWalletTxNumber(walletAddress, chain);
     console.log(`➡️  ${chain} Counted ${transactionCount} TXs on ${walletAddress}`);
 
-    res.json({chain, address: walletAddress, count: transactionCount });
+    res.json({ chain, address: walletAddress, count: transactionCount });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -151,78 +133,10 @@ app.listen(PORT, () => {
 });
 
 
-// Execution Logic
-
-// switch between chains - i.e. decide which p2p RPC / publicClient instance to use
-async function getClient(chainID) {
-  let client;
-  switch (chainID) {
-    case 'ETH1':
-      client = viemETH;
-      return client;
-    case 'OPTM':
-      client = viemOPTM;
-      return client;
-    case 'ARB1':
-      client = viemARB;
-      return client;
-    default:
-      throw new Error(`Unsupported chain: ${chainID}`);
-  }
-}
-
-// Function that gets wallet balance of a given address on a given chain
-async function getWalletBalance(addressInput, chainInput) {
-
-  const client = await getClient(chainInput);
-
-  let balance = await client.getBalance({ address: addressInput });
-  return balance;
-};
-
-// Function that gets wallet TXs of a given address on a given chain within certain block range
-async function getWalletTransactions(addressInput, chainInput, fromBlock, toBlock) {
-
-  const client = await getClient(chainInput);
-
-  // Call the viem getLogs function
-  const logs = await client.getLogs({
-    address: addressInput,
-    event: parseAbiItem('event Transfer(address indexed, address indexed, uint256)'),
-    fromBlock: BigInt(fromBlock), // Ensure these are BigInts
-    toBlock: BigInt(toBlock),
-    // Add more parameters as needed
-  });
-
-  return logs;
-
-};
-
-// Function that gets the latest block from the selected chain!
-async function getBlockNumber(chainInput) {
-
-  const client = await getClient(chainInput);
-
-  //Call the viem getBlockNumber
-  const latestBlockNumber = await client.getBlockNumber();
-
-  //convert to Number
-  return Number(latestBlockNumber);
-}
-
-// Function that gets the number of TXs from a given address!
-async function getWalletTxNumber(addressInput, chainInput) {
-  const client = await getClient(chainInput);
-
-  //Call the viem getTxCount
-  const txCount = await client.getTransactionCount({address: addressInput});
-
-  return txCount;
-
-};
 
 
-// HELPER functions
+
+// *** HELPER functions *** 
 
 function simplifyJSONIntegers(key, value) {
   if (typeof value === 'bigint') {
