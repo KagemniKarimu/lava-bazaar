@@ -75,28 +75,6 @@ app.get('/api/wallet/balance', async (req, res) => {
   // Logic to interact with blockchain and fetch balance
 });
 
-// Route to get transaction history (DISABLED!)
-//app.get('/api/wallet/transactions', async (req, res) => {
-//  console.log("✅ GET - /api/wallet/transactions", req.query.address, req.query.chain);
-//  // Logic to interact with blockchain and fetch transactions
-//
-//  try {
-//    const { address: walletAddress, chain } = req.query;
-//
-//    if (!walletAddress || !chain) {
-//      return res.status(400).json({ error: 'Missing required parameters' });
-//    };
-//
-//    const transactions = await getWalletTransactions(walletAddress, chain);
-//    console.log(`➡️  ${chain} Recovered ${transactions.length} TXs from ${walletAddress}`);
-//
-//    res.json(JSON.stringify({ chain, address: walletAddress, transactions }, simplifyJSONIntegers));
-//  } catch (error) {
-//    console.error(error);
-//    res.status(500).json({ error: error.message });
-//  }
-//});
-
 //Route to get Transaction Count
 app.get('/api/wallet/transaction_count', async (req, res) => {
   console.log("✅ GET - /api/wallet/transaction_count", req.query.address, req.query.chain);
@@ -121,6 +99,28 @@ app.get('/api/wallet/transaction_count', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Route to get transaction history (DISABLED!)
+//app.get('/api/wallet/transactions', async (req, res) => {
+//  console.log("✅ GET - /api/wallet/transactions", req.query.address, req.query.chain);
+//  // Logic to interact with blockchain and fetch transactions
+//
+//  try {
+//    const { address: walletAddress, chain } = req.query;
+//
+//    if (!walletAddress || !chain) {
+//      return res.status(400).json({ error: 'Missing required parameters' });
+//    };
+//
+//    const transactions = await getWalletTransactions(walletAddress, chain);
+//    console.log(`➡️  ${chain} Recovered ${transactions.length} TXs from ${walletAddress}`);
+//
+//    res.json(JSON.stringify({ chain, address: walletAddress, transactions }, simplifyJSONIntegers));
+//  } catch (error) {
+//    console.error(error);
+//    res.status(500).json({ error: error.message });
+//  }
+//});
 
 
 
