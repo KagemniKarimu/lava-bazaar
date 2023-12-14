@@ -1,2 +1,28 @@
-# lava-bazaar
-A cross-chain asset aggregator using p2p RPC
+# 🌋 The Lava Bazaar
+
+A cross-chain asset tracker using p2p RPC. A demo app which makes use of the [`lava-viem` integration](https://docs.lavanet.xyz/viem).
+Quickly check the balance of any wallet across supported blockchains. No RPC URLs were harmed in the making of this application!
+
+## Try it Out!
+
+![Working Program](image-2.png)
+
+### Start the Backend
+
+```bash 
+cd backend
+npm start
+```
+
+![BackEnd Snapshot](image-1.png)
+
+### Start the Frontend
+
+Once the backend is running!
+
+```bash
+cd frontend
+npm start
+```
+
+![FrontEnd Snapshot](image.png)
