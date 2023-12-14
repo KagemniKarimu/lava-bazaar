@@ -20,6 +20,18 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'images', // This will put all your images into an 'images' folder in the output directory
+              name: '[name].[ext]', // The name of the image file will be the same as the original
+            },
+          },
+        ],
+      },
     ],
   },
   devServer: {
