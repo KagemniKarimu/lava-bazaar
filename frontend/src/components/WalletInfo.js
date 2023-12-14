@@ -38,19 +38,21 @@ function WalletInfo() {
         setLatestBlock(data.latestBlockNumber);
     }
 
- //   const fetchWalletTransactions = async () => {
- //       const responseTransactions = await fetch(`http://localhost:3000/api/wallet/transactions?address=${address}&chain=${chain}`);
- //       if (!responseTransactions.ok) throw new Error(`Error: ${responseTransactions.statusText}`);
- //       const dataTransactions = await responseTransactions.json();
- //       setTransactions(dataTransactions.transactions || []);
- //   };
-
     const fetchTransactionCount = async () => {
         const response = await fetch(`http://localhost:3000/api/wallet/transaction_count?chain=${chain}&address=${address}`);
         if (!response.ok) throw new Error(`Error: ${response.statusText}`);
         const data = await response.json();
         setTxCount(data.count);
     };
+
+    //   const fetchWalletTransactions = async () => {
+ //       const responseTransactions = await fetch(`http://localhost:3000/api/wallet/transactions?address=${address}&chain=${chain}`);
+ //       if (!responseTransactions.ok) throw new Error(`Error: ${responseTransactions.statusText}`);
+ //       const dataTransactions = await responseTransactions.json();
+ //       setTransactions(dataTransactions.transactions || []);
+ //   };
+
+
 
     const fetchWalletData = async () => {
         setError('');
