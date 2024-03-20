@@ -11,6 +11,7 @@ Quickly check the balance of any wallet across supported blockchains. No RPC URL
 
 ```bash 
 cd backend
+npm install
 npm start
 ```
 
@@ -22,6 +23,7 @@ Once the backend is running!
 
 ```bash
 cd frontend
+npm install
 npm start
 ```
 
