@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "npm install"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,7 @@
   "dependencies": {
     "@lavanet/lava-viem": "^0.30.6",
     "express": "^4.18.2",
-    "viem": "^1.19.13"
+    "viem": "^1.19.13",
+    "cors": "^2.8.5"
   }
 }

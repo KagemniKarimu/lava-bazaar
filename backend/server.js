@@ -1,5 +1,7 @@
 
 const express = require('express');
+const cors = require('cors');
+
 const { createClientForChain,
   clientList,
   getBlockNumber,
@@ -34,6 +36,8 @@ const supportedChains = ["ARB1", "AVAX", "CELO", "ETH1", "FVM", "OPTM", "POLYGON
 
 })();
 
+// ***** CORS Middleware *****
+app.use(cors());
 
 // ***** ROUTES / ROUTING *****
 
